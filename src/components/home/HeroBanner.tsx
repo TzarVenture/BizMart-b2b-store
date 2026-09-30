@@ -85,9 +85,9 @@ export default function HeroBanner() {
 
             {/* Buyer Sign In / My Enquiries Button */}
             {mounted && buyerUser?.isLoggedIn ? (
-              <button
-                onClick={() => openEnquiriesModal()}
-                className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#00a699] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2.5 group hover:scale-105 cursor-pointer border-2 border-emerald-400"
+              <Link
+                href="/buyer"
+                className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#00a699] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2.5 group hover:scale-105 border-2 border-emerald-400"
               >
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -97,7 +97,7 @@ export default function HeroBanner() {
                   My Enquiries <span className="ml-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs">{userLeadsCount}</span>
                 </span>
                 <ArrowRight size={15} className="text-[#00a699] group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             ) : (
               <button
                 onClick={() => openSignInModal()}

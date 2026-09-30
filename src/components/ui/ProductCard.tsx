@@ -10,7 +10,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { openRfqModal, addToRfqBasket } = useLeadStore();
+  const { openRfqModal, addToRfqBasket, rfqBasket } = useLeadStore();
 
   const title = product.title || product.name || 'Industrial Product';
   const id = product.id || product.slug || 1;
@@ -23,6 +23,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const price = product.price || 0;
   const inrPrice = formatINR(price);
   const sku = product.sku || `BM-${id}`;
+
+  const isInBasket = rfqBasket.some((item) => item.productId === Number(id));
 
   const handleOpenRfq = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -76,12 +78,19 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
         </div>
+
+        {/* Quick Add to RFQ Cart Button */}
         <button
           onClick={handleAddToBasket}
-          title="Add to RFQ Basket"
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/95 shadow-md hover:bg-[#00a699] hover:text-white text-slate-700 flex items-center justify-center transition-all duration-200 hover:scale-105"
+          title={isInBasket ? 'Already in RFQ Cart' : 'Add to RFQ Cart'}
+          className={`absolute top-3 right-3 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-105 cursor-pointer z-10 ${
+            isInBasket
+              ? 'h-8 px-2.5 rounded-full bg-[#ff7e00] text-white text-[11px] font-bold gap-1'
+              : 'w-8 h-8 rounded-full bg-white/95 hover:bg-[#ff7e00] text-slate-700 hover:text-white'
+          }`}
         >
-          <ShoppingCart size={16} />
+          <ShoppingCart size={15} />
+          {isInBasket && <span>In Cart</span>}
         </button>
       </Link>
 
@@ -112,7 +121,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-xs text-slate-400">/ Piece</span>
           </div>
 
-          <div className="flex items-center justify-between text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 mb-3.5">
+          <div className="flex items-center justify-between text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 mb-3">
             <span>
               MOQ: <strong className="text-slate-800 font-bold">{moq} Pieces</strong>
             </span>
@@ -122,24 +131,45 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* Action CTAs */}
-          <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-100">
-            <button
-              onClick={handleOpenRfq}
-              className="flex items-center justify-center gap-1.5 bg-[#00a699] hover:bg-[#00857a] text-white py-2.5 px-3 rounded-xl text-xs font-bold transition shadow-xs"
-            >
-              <FileText size={14} />
-              <span>Get Best Price</span>
-            </button>
+          <div className="space-y-2 pt-3 border-t border-slate-100">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleOpenRfq}
+                className="flex items-center justify-center gap-1.5 bg-[#00a699] hover:bg-[#00857a] text-white py-2 px-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+              >
+                <FileText size={14} />
+                <span>Get Best Price</span>
+              </button>
 
-            <a
-              href={`https://wa.me/919876543210?text=${whatsappMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white py-2.5 px-3 rounded-xl text-xs font-bold transition shadow-xs"
-            >
-              <MessageCircle size={14} />
-              <span>WhatsApp</span>
-            </a>
+              <a
+                href={`https://wa.me/919876543210?text=${whatsappMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white py-2 px-2.5 rounded-xl text-xs font-bold transition shadow-xs"
+              >
+                <MessageCircle size={14} />
+                <span>WhatsApp</span>
+              </a>
+            </div>
+
+            {/* Dedicated Clear "Add to RFQ Cart" button */}
+            {isInBasket ? (
+              <Link
+                href="/rfq"
+                className="w-full flex items-center justify-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 py-1.5 px-3 rounded-xl text-xs font-bold transition"
+              >
+                <ShoppingCart size={13} className="text-[#ff7e00]" />
+                <span>In RFQ Cart • View Cart ({rfqBasket.length})</span>
+              </Link>
+            ) : (
+              <button
+                onClick={handleAddToBasket}
+                className="w-full flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-[#ff7e00] text-slate-700 hover:text-white py-1.5 px-3 rounded-xl text-xs font-bold transition cursor-pointer group/btn"
+              >
+                <ShoppingCart size={13} className="text-slate-500 group-hover/btn:text-white transition" />
+                <span>+ Add to Multi-Product RFQ</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

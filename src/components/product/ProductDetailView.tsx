@@ -28,7 +28,8 @@ export default function ProductDetailView({
   product,
   relatedProducts,
 }: ProductDetailViewProps) {
-  const { openRfqModal, addToRfqBasket } = useLeadStore();
+  const { openRfqModal, addToRfqBasket, rfqBasket } = useLeadStore();
+  const isInBasket = rfqBasket.some((item) => item.productId === product.id);
   const [selectedImage, setSelectedImage] = useState(
     product.images?.[0] || product.thumbnail || ''
   );
@@ -249,23 +250,33 @@ export default function ProductDetailView({
                 </button>
 
                 {/* 2. Add to Multi-Product RFQ Basket */}
-                <button
-                  onClick={() =>
-                    addToRfqBasket({
-                      productId: product.id,
-                      title: product.title,
-                      image: selectedImage,
-                      moq: product.minimumOrderQuantity || 10,
-                      price: product.price,
-                      quantity,
-                      unit: 'Pieces',
-                    })
-                  }
-                  className="bg-[#ff7e00] hover:bg-[#e67100] text-white py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm"
-                >
-                  <ShoppingCart size={16} />
-                  <span>Add to RFQ List</span>
-                </button>
+                {isInBasket ? (
+                  <Link
+                    href="/rfq"
+                    className="bg-amber-50 hover:bg-amber-100 text-amber-800 border-2 border-[#ff7e00] py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <ShoppingCart size={16} className="text-[#ff7e00]" />
+                    <span>In RFQ Cart • View Cart ({rfqBasket.length})</span>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() =>
+                      addToRfqBasket({
+                        productId: product.id,
+                        title: product.title,
+                        image: selectedImage,
+                        moq: product.minimumOrderQuantity || 10,
+                        price: product.price,
+                        quantity,
+                        unit: 'Pieces',
+                      })
+                    }
+                    className="bg-[#ff7e00] hover:bg-[#e67100] text-white py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm cursor-pointer hover:scale-[1.02]"
+                  >
+                    <ShoppingCart size={16} />
+                    <span>Add to RFQ Cart</span>
+                  </button>
+                )}
 
                 {/* 3. WhatsApp Us */}
                 <a

@@ -6,8 +6,8 @@ import Footer from "@/components/layout/Footer";
 import AOSInit from "@/components/AOSInit";
 import RFQModal from "@/components/ui/RFQModal";
 import SignInModal from "@/components/ui/SignInModal";
-import BuyerEnquiriesModal from "@/components/ui/BuyerEnquiriesModal";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import GlobalToast from "@/components/ui/GlobalToast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,8 +31,8 @@ export default function RootLayout({
         <Footer />
         <RFQModal />
         <SignInModal />
-        <BuyerEnquiriesModal />
         <ScrollToTop />
+        <GlobalToast />
       </body>
     </html>
   );

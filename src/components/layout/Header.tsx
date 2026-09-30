@@ -417,12 +417,10 @@ export default function Header() {
                       </div>
 
                       <div className="py-1.5 space-y-0.5">
-                        <button
-                          onClick={() => {
-                            setIsUserMenuOpen(false);
-                            openEnquiriesModal();
-                          }}
-                          className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 transition flex items-center justify-between text-slate-700 font-semibold cursor-pointer group"
+                        <Link
+                          href="/buyer"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 transition flex items-center justify-between text-slate-700 font-semibold group"
                         >
                           <span className="flex items-center gap-2 group-hover:text-[#00a699]">
                             <FileText size={15} className="text-[#00a699]" /> My Enquiries & RFQs
@@ -430,7 +428,16 @@ export default function Header() {
                           <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-mono font-bold">
                             {userLeadsCount}
                           </span>
-                        </button>
+                        </Link>
+
+                        <Link
+                          href="/buyer"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 transition flex items-center gap-2 text-slate-700 font-semibold group"
+                        >
+                          <User size={15} className="text-slate-400 group-hover:text-[#00a699]" />
+                          <span>Buyer Profile & Settings</span>
+                        </Link>
 
                         <Link
                           href="/rfq"
@@ -566,16 +573,13 @@ export default function Header() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      openEnquiriesModal();
-                    }}
-                    className="px-2.5 py-1 bg-white text-[#00a699] border border-emerald-300 rounded-lg text-xs font-bold shadow-2xs hover:bg-emerald-50 cursor-pointer"
+                  <Link
+                    href="/buyer"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="px-2.5 py-1 bg-white text-[#00a699] border border-emerald-300 rounded-lg text-xs font-bold shadow-2xs hover:bg-emerald-50"
                   >
                     My RFQs ({userLeadsCount})
-                  </button>
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {

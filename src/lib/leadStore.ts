@@ -91,13 +91,18 @@ interface LeadStoreState {
   isSignInModalOpen: boolean;
   openSignInModal: () => void;
   closeSignInModal: () => void;
-  // Buyer Authentication & Enquiries Portal
+  // Buyer Authentication & Profile
   buyerUser: BuyerUser | null;
   loginBuyer: (user: Partial<BuyerUser>) => void;
+  updateBuyerProfile: (profile: Partial<BuyerUser>) => void;
   logoutBuyer: () => void;
   isEnquiriesModalOpen: boolean;
   openEnquiriesModal: () => void;
   closeEnquiriesModal: () => void;
+  // Global Toast
+  toast: { text: string; link?: string; linkText?: string } | null;
+  showToast: (text: string, link?: string, linkText?: string) => void;
+  hideToast: () => void;
 }
 
 const INITIAL_LEADS: Lead[] = [
@@ -173,6 +178,7 @@ export const useLeadStore = create<LeadStoreState>()(
       isSignInModalOpen: false,
       buyerUser: null,
       isEnquiriesModalOpen: false,
+      toast: null,
 
       addLead: (leadData) => {
         const newLead: Lead = {
@@ -225,24 +231,28 @@ export const useLeadStore = create<LeadStoreState>()(
       addToRfqBasket: (item) => {
         set((state) => {
           const existing = state.rfqBasket.find((i) => i.productId === item.productId);
-          if (existing) {
-            return {
-              rfqBasket: state.rfqBasket.map((i) =>
+          const shortTitle = item.title.length > 25 ? `${item.title.slice(0, 25)}...` : item.title;
+          const updatedBasket = existing
+            ? state.rfqBasket.map((i) =>
                 i.productId === item.productId
                   ? { ...i, quantity: i.quantity + (item.quantity || item.moq || 1) }
                   : i
-              ),
-            };
-          }
+              )
+            : [
+                ...state.rfqBasket,
+                {
+                  ...item,
+                  quantity: item.quantity || item.moq || 10,
+                  unit: item.unit || 'Pieces',
+                },
+              ];
           return {
-            rfqBasket: [
-              ...state.rfqBasket,
-              {
-                ...item,
-                quantity: item.quantity || item.moq || 10,
-                unit: item.unit || 'Pieces',
-              },
-            ],
+            rfqBasket: updatedBasket,
+            toast: {
+              text: `Added "${shortTitle}" to RFQ Cart!`,
+              link: '/rfq',
+              linkText: `View Cart (${updatedBasket.length})`,
+            },
           };
         });
       },
@@ -305,6 +315,17 @@ export const useLeadStore = create<LeadStoreState>()(
         });
       },
 
+      updateBuyerProfile: (profileData) => {
+        set((state) => ({
+          buyerUser: state.buyerUser
+            ? { ...state.buyerUser, ...profileData }
+            : null,
+          toast: {
+            text: 'Profile updated successfully!',
+          },
+        }));
+      },
+
       logoutBuyer: () => {
         set({ buyerUser: null });
       },
@@ -315,6 +336,14 @@ export const useLeadStore = create<LeadStoreState>()(
 
       closeEnquiriesModal: () => {
         set({ isEnquiriesModalOpen: false });
+      },
+
+      showToast: (text, link, linkText) => {
+        set({ toast: { text, link, linkText } });
+      },
+
+      hideToast: () => {
+        set({ toast: null });
       },
     }),
     {
