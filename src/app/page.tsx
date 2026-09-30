@@ -1,4 +1,5 @@
 import { getProducts, Product } from '@/lib/api';
+import fallbackProductsData from '@/data/fallbackProducts.json';
 import HeroBanner from '@/components/home/HeroBanner';
 import TrendingSection from '@/components/home/TrendingSection';
 import IndustryShowcase from '@/components/home/IndustryShowcase';
@@ -7,7 +8,7 @@ import MidPageSearch from '@/components/home/MidPageSearch';
 import TrustAndSteps from '@/components/home/TrustAndSteps';
 import QuickRfqWidget from '@/components/home/QuickRfqWidget';
 
-export const revalidate = 3600; // ISR cache for 1 hour
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   let allProducts: Product[] = [];
@@ -17,6 +18,11 @@ export default async function HomePage() {
     allProducts = data.products || [];
   } catch (err) {
     console.error('Error fetching DummyJSON products on homepage:', err);
+  }
+
+  // Guaranteed fallback: If DummyJSON ever fails or rate-limits on Vercel, use local catalogue
+  if (!allProducts || allProducts.length === 0) {
+    allProducts = fallbackProductsData as unknown as Product[];
   }
 
   // Strictly filter out all food and groceries
