@@ -725,36 +725,36 @@ export default function Header() {
         aria-hidden="true"
       />
 
-      {/* Industry Standard Mobile Side Drawer (Sliding from Left with full height) */}
+      {/* Industry Standard Mobile Side Drawer (Sliding from Left with dynamic viewport height) */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 h-screen w-[85%] max-w-[340px] bg-white z-[1000] shadow-2xl flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-out lg:hidden ${
+        className={`fixed inset-y-0 left-0 h-full h-[100dvh] max-h-[100dvh] w-[88%] max-w-[340px] bg-white z-[1000] shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-out lg:hidden ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Industry Standard Navy Blue Header Banner */}
-        <div className="bg-[#2b3377] text-white p-5 flex-shrink-0 relative">
+        <div className="bg-[#2b3377] text-white p-4 sm:p-5 flex-shrink-0 relative">
           <button
             onClick={() => setIsMenuOpen(false)}
-            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+            className="absolute top-3.5 right-3.5 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
             aria-label="Close menu"
           >
             <X size={18} />
           </button>
 
           {mounted && buyerUser?.isLoggedIn ? (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-white text-[#2b3377] flex items-center justify-center font-black text-lg shadow-md ring-2 ring-emerald-300">
+                <div className="w-11 h-11 rounded-full bg-white text-[#2b3377] flex items-center justify-center font-black text-base shadow-md ring-2 ring-emerald-300 shrink-0">
                   {buyerUser.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <h3 className="font-bold text-sm text-white truncate">{buyerUser.name}</h3>
-                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[9px] font-bold">
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[9px] font-bold shrink-0">
                       ✓ Verified
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-300 font-mono">{buyerUser.phone}</p>
+                  <p className="text-[11px] text-slate-300 font-mono truncate">{buyerUser.phone}</p>
                 </div>
               </div>
 
@@ -762,7 +762,7 @@ export default function Header() {
                 <Link
                   href="/buyer"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex-1 py-1.5 px-3 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-bold text-center transition border border-white/20"
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-bold text-center transition border border-white/20 truncate"
                 >
                   Buyer Portal ({userLeadsCount} RFQs)
                 </Link>
@@ -772,17 +772,17 @@ export default function Header() {
                     setIsMenuOpen(false);
                     logoutBuyer();
                   }}
-                  className="py-1.5 px-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-200 text-xs font-semibold border border-red-400/30 transition cursor-pointer"
+                  className="py-1.5 px-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-200 text-xs font-semibold border border-red-400/30 transition cursor-pointer shrink-0"
                 >
                   Sign Out
                 </button>
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center font-bold">
-                  <User size={22} />
+                <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center font-bold shrink-0">
+                  <User size={20} />
                 </div>
                 <div>
                   <h3 className="font-bold text-sm text-white">Hello, Welcome!</h3>
@@ -805,163 +805,165 @@ export default function Header() {
           )}
         </div>
 
-        {/* Scrollable Drawer Body */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
-          {/* Featured B2B Actions */}
-          <div className="space-y-2">
-            {/* Post Requirement CTA Button */}
-            <button
-              onClick={() => {
-                setIsMenuOpen(false);
-                openRfqModal();
-              }}
-              className="w-full p-3 rounded-xl bg-gradient-to-r from-[#00a699] to-[#008f84] text-white font-bold text-xs shadow-sm transition flex items-center justify-between cursor-pointer group"
-            >
-              <div className="flex items-center gap-2.5">
-                <FileText size={17} className="text-white" />
-                <div className="text-left">
-                  <div className="leading-tight">Post Buy Requirement</div>
-                  <div className="text-[10px] text-teal-100 font-normal">Get instant supplier quotes</div>
-                </div>
-              </div>
-              <ChevronRight size={16} className="text-white/80 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-
-            {/* Multi-Product RFQ Basket */}
-            <Link
-              href="/rfq"
-              onClick={() => setIsMenuOpen(false)}
-              className="w-full p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-slate-800 font-bold text-xs transition flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-2.5">
-                <ShoppingCart size={17} className="text-[#ff7e00]" />
-                <div className="text-left">
-                  <div className="text-slate-900 leading-tight">Multi-Product RFQ Basket</div>
-                  <div className="text-[10px] text-slate-500 font-normal">Bulk quotation cart</div>
-                </div>
-              </div>
-              <span className="px-2 py-0.5 rounded-full bg-[#ff7e00] text-white text-[11px] font-mono font-black">
-                {mounted ? rfqBasket.length : 0}
-              </span>
-            </Link>
-          </div>
-
-          {/* Quick Hub Location Selector */}
-          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-slate-600">
-                <MapPin size={12} className="text-[#d83734]" />
-                <span>Delivery Hub: <strong className="text-slate-900">{selectedCity}</strong></span>
-              </span>
-            </div>
-            <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-              {TOP_CITIES.slice(0, 7).map((city) => (
-                <button
-                  key={city}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCity(city);
-                    setIsMenuOpen(false);
-                    if (city === 'All India') router.push('/products');
-                    else router.push(`/products?city=${encodeURIComponent(city)}`);
-                  }}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition cursor-pointer ${
-                    selectedCity === city
-                      ? 'bg-[#00a699] text-white'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-                  }`}
-                >
-                  {city}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Sourcing Categories Directory (IndiaMART style department links) */}
-          <div>
-            <div className="px-1 mb-1.5 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              <span>Sourcing Categories</span>
-              <Link
-                href="/categories"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-[#00a699] hover:underline normal-case font-semibold"
+        {/* Scrollable Container for All Body & Footer Content */}
+        <div className="flex-1 overflow-y-auto overscroll-contain flex flex-col justify-between">
+          <div className="p-4 space-y-4">
+            {/* Featured B2B Actions */}
+            <div className="space-y-2">
+              {/* Post Requirement CTA Button */}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  openRfqModal();
+                }}
+                className="w-full p-3 rounded-xl bg-gradient-to-r from-[#00a699] to-[#008f84] text-white font-bold text-xs shadow-sm transition flex items-center justify-between cursor-pointer group"
               >
-                View All →
+                <div className="flex items-center gap-2.5">
+                  <FileText size={17} className="text-white shrink-0" />
+                  <div className="text-left">
+                    <div className="leading-tight">Post Buy Requirement</div>
+                    <div className="text-[10px] text-teal-100 font-normal">Get instant supplier quotes</div>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-white/80 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              </button>
+
+              {/* Multi-Product RFQ Basket */}
+              <Link
+                href="/rfq"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-slate-800 font-bold text-xs transition flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <ShoppingCart size={17} className="text-[#ff7e00] shrink-0" />
+                  <div className="text-left">
+                    <div className="text-slate-900 leading-tight">Multi-Product RFQ Basket</div>
+                    <div className="text-[10px] text-slate-500 font-normal">Bulk quotation cart</div>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full bg-[#ff7e00] text-white text-[11px] font-mono font-black shrink-0">
+                  {mounted ? rfqBasket.length : 0}
+                </span>
               </Link>
             </div>
-            <div className="space-y-0.5 text-xs font-semibold text-slate-700">
-              {CATEGORY_ITEMS.map((cat) => (
+
+            {/* Quick Hub Location Selector */}
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-slate-600">
+                  <MapPin size={12} className="text-[#d83734] shrink-0" />
+                  <span>Delivery Hub: <strong className="text-slate-900">{selectedCity}</strong></span>
+                </span>
+              </div>
+              <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                {TOP_CITIES.slice(0, 7).map((city) => (
+                  <button
+                    key={city}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCity(city);
+                      setIsMenuOpen(false);
+                      if (city === 'All India') router.push('/products');
+                      else router.push(`/products?city=${encodeURIComponent(city)}`);
+                    }}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition cursor-pointer ${
+                      selectedCity === city
+                        ? 'bg-[#00a699] text-white'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {city}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sourcing Categories Directory */}
+            <div>
+              <div className="px-1 mb-1.5 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <span>Sourcing Categories</span>
                 <Link
-                  key={cat.slug}
-                  href={`/categories/${cat.slug}`}
+                  href="/categories"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition group"
+                  className="text-[#00a699] hover:underline normal-case font-semibold"
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span className="text-base">{cat.icon}</span>
-                    <span className="group-hover:text-[#00a699] transition">{cat.name}</span>
-                  </span>
-                  <ChevronRight size={13} className="text-slate-300 group-hover:text-[#00a699] transition" />
+                  View All →
                 </Link>
-              ))}
+              </div>
+              <div className="space-y-0.5 text-xs font-semibold text-slate-700">
+                {CATEGORY_ITEMS.map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={`/categories/${cat.slug}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition group"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <span className="text-base">{cat.icon}</span>
+                      <span className="group-hover:text-[#00a699] transition">{cat.name}</span>
+                    </span>
+                    <ChevronRight size={13} className="text-slate-300 group-hover:text-[#00a699] transition shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Pages */}
+            <div className="border-t border-slate-100 pt-2 space-y-0.5 text-xs font-semibold text-slate-700">
+              <Link
+                href="/"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
+              >
+                <Globe size={15} className="text-[#00a699] shrink-0" />
+                <span>Marketplace Home</span>
+              </Link>
+
+              <Link
+                href="/products"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
+              >
+                <Package size={15} className="text-slate-400 shrink-0" />
+                <span>Full Product Catalogue</span>
+              </Link>
+
+              <Link
+                href="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
+              >
+                <Layers size={15} className="text-slate-400 shrink-0" />
+                <span>CRM Leads Dashboard</span>
+              </Link>
             </div>
           </div>
 
-          {/* Navigation Pages */}
-          <div className="border-t border-slate-100 pt-2 space-y-0.5 text-xs font-semibold text-slate-700">
-            <Link
-              href="/"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
-            >
-              <Globe size={15} className="text-[#00a699]" />
-              <span>Marketplace Home</span>
-            </Link>
+          {/* Guaranteed Visible Bottom Action Buttons with Ample Clearance (pb-10) */}
+          <div className="p-4 pt-3 border-t border-slate-100 bg-slate-50 space-y-2 text-xs mt-auto pb-10 sm:pb-6">
+            <div className="grid grid-cols-2 gap-2">
+              <a
+                href="tel:+919876543210"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 transition shadow-2xs"
+              >
+                <PhoneCall size={14} className="text-[#00a699] shrink-0" />
+                <span>Call Help</span>
+              </a>
 
-            <Link
-              href="/products"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
-            >
-              <Package size={15} className="text-slate-400" />
-              <span>Full Product Catalogue</span>
-            </Link>
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] font-bold hover:bg-[#25D366]/20 transition shadow-2xs"
+              >
+                <MessageCircle size={14} className="shrink-0" />
+                <span>WhatsApp</span>
+              </a>
+            </div>
 
-            <Link
-              href="/admin"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
-            >
-              <Layers size={15} className="text-slate-400" />
-              <span>CRM Leads Dashboard</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Industry Standard Drawer Footer: Quick Help & WhatsApp */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50 flex-shrink-0 space-y-2 text-xs">
-          <div className="grid grid-cols-2 gap-2">
-            <a
-              href="tel:+919876543210"
-              className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 transition shadow-2xs"
-            >
-              <PhoneCall size={13} className="text-[#00a699]" />
-              <span>Call Help</span>
-            </a>
-
-            <a
-              href="https://wa.me/919876543210"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] font-bold hover:bg-[#25D366]/20 transition shadow-2xs"
-            >
-              <MessageCircle size={13} />
-              <span>WhatsApp</span>
-            </a>
-          </div>
-
-          <div className="text-[10px] text-center text-slate-400 pt-0.5">
-            BizMart B2B Marketplace • Verified Direct Sourcing
+            <div className="text-[10px] text-center text-slate-400 pt-1 pb-1">
+              BizMart B2B Marketplace • Verified Direct Sourcing
+            </div>
           </div>
         </div>
       </aside>
