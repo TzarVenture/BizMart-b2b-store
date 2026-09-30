@@ -8,7 +8,6 @@ import {
   Menu,
   X,
   MapPin,
-  ShoppingBag,
   FileText,
   PhoneCall,
   MessageCircle,
@@ -122,19 +121,16 @@ export default function Header() {
       <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-3 lg:gap-5">
           
-          {/* Logo with ShoppingBag icon as requested */}
-          <Link href="/" className="flex-shrink-0 flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2b3377] to-[#00a699] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
-              <ShoppingBag size={22} className="stroke-[2.2]" />
-            </div>
-            <div className="flex flex-col">
-              <div className="text-2xl font-black tracking-tight text-[#2b3377] leading-none">
-                biz<span className="text-[#00a699]">mart</span>
-              </div>
-              <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase mt-0.5">
-                B2B Marketplace
-              </span>
-            </div>
+          {/* Professional BizMart Logo: Clean icon without card/bg & clean text */}
+          <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
+            <img
+              src="/logo-icon.png"
+              alt="BizMart Logo"
+              className="h-10 w-10 sm:h-11 sm:w-11 object-contain transition-transform group-hover:scale-105"
+            />
+            <span className="text-2xl sm:text-[28px] font-black tracking-tight text-[#2b3377] leading-none">
+              biz<span className="text-[#00a699]">mart</span>
+            </span>
           </Link>
 
           {/* IndiaMART Location Selector Box: [ 📍 City ▾ | 🔍 ] */}

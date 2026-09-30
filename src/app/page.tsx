@@ -90,8 +90,8 @@ export default async function HomePage() {
       {/* 1. IndiaMART Top Navy Blue Hero Banner with Concentric Wave Background & Bottom Fade */}
       <HeroBanner />
 
-      {/* 2. Trending on BizMart Section (Starts on clean solid white merging seamlessly from hero bottom fade) */}
-      <div className="w-full bg-white border-b border-slate-200/80 -mt-12 sm:-mt-16 relative z-20 pb-8 pt-0">
+      {/* 2. Trending on BizMart Section (Starts on clean solid white merging seamlessly from hero bottom fade with proper gap) */}
+      <div className="w-full bg-white pb-12 pt-8 sm:pt-10">
         <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8">
           <TrendingSection products={trendingList} />
         </div>

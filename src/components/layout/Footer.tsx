@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Mail, MapPin, Phone, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { Mail, MapPin, Phone, ShieldCheck } from 'lucide-react';
 
 const TOP_CITIES = [
   {
@@ -95,13 +95,15 @@ export default function Footer() {
       <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10 text-xs">
           
-          {/* Brand Info with ShoppingBag icon */}
+          {/* Brand Info with BizMart icon */}
           <div className="lg:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-[#00a699] flex items-center justify-center text-white shadow-sm">
-                <ShoppingBag size={22} className="stroke-[2.2]" />
-              </div>
-              <span className="text-2xl font-black text-white tracking-tight">
+            <Link href="/" className="flex items-center gap-2 group">
+              <img
+                src="/logo-icon.png"
+                alt="BizMart Logo"
+                className="h-10 w-10 sm:h-11 sm:w-11 object-contain transition-transform group-hover:scale-105"
+              />
+              <span className="text-2xl sm:text-[28px] font-black text-white tracking-tight leading-none">
                 biz<span className="text-[#00a699]">mart</span>
               </span>
             </Link>

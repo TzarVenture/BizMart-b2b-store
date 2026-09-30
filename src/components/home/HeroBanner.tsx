@@ -78,7 +78,7 @@ export default function HeroBanner() {
       </div>
 
       {/* Bottom Stats Row inside Hero */}
-      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-6 mt-6 sm:mt-8 border-t border-white/10 mb-4 sm:mb-6">
+      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-6 mt-8 sm:mt-10 border-t border-white/10 mb-8 sm:mb-12">
         <div className="flex flex-wrap items-center justify-between gap-6 text-xs sm:text-sm">
           <div className="flex items-baseline gap-2">
             <span className="text-2xl sm:text-3xl font-black text-white">21Cr+</span>
@@ -102,12 +102,12 @@ export default function HeroBanner() {
         </div>
       </div>
 
-      {/* Bottom Seamless Gradient Fade: Ultra-gentle ease-in cubic curve from dark navy into solid white */}
+      {/* Bottom Generous Gradient Fade: Light subtle top fade merging into solid pure white at bottom */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-44 sm:h-60 pointer-events-none z-10"
+        className="absolute bottom-0 left-0 right-0 h-64 sm:h-80 lg:h-[380px] pointer-events-none z-10"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 20%, rgba(255,255,255,0.07) 38%, rgba(255,255,255,0.18) 54%, rgba(255,255,255,0.40) 70%, rgba(255,255,255,0.72) 84%, rgba(255,255,255,0.92) 94%, rgba(255,255,255,1) 100%)',
+            'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.03) 20%, rgba(255,255,255,0.10) 38%, rgba(255,255,255,0.26) 54%, rgba(255,255,255,0.55) 70%, rgba(255,255,255,0.85) 85%, rgba(255,255,255,0.98) 94%, rgba(255,255,255,1) 100%)',
         }}
       />
 
