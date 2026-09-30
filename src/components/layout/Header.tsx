@@ -20,6 +20,9 @@ import {
   Camera,
   LogOut,
   CheckCircle2,
+  ChevronRight,
+  Package,
+  Sparkles,
 } from 'lucide-react';
 import { useLeadStore } from '@/lib/leadStore';
 
@@ -46,6 +49,16 @@ const TOP_CITIES = [
   'Lucknow',
 ];
 
+const CATEGORY_ITEMS = [
+  { name: 'Smartphones & Electronics', slug: 'smartphones', icon: '📱' },
+  { name: 'Laptops & Computers', slug: 'laptops', icon: '💻' },
+  { name: 'Furniture & Interior', slug: 'furniture', icon: '🪑' },
+  { name: 'Beauty & Personal Care', slug: 'beauty', icon: '💄' },
+  { name: 'Watches & Accessories', slug: 'mens-watches', icon: '⌚' },
+  { name: 'Groceries & Provisions', slug: 'groceries', icon: '🛒' },
+  { name: 'Automotive & Industrial', slug: 'motorcycle', icon: '⚙️' },
+];
+
 export default function Header() {
   const router = useRouter();
   const {
@@ -54,11 +67,11 @@ export default function Header() {
     rfqBasket,
     buyerUser,
     logoutBuyer,
-    openEnquiriesModal,
     leads,
   } = useLeadStore();
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('All India');
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
@@ -66,13 +79,26 @@ export default function Header() {
   const [cityFilter, setCityFilter] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
   const searchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const cityDropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   const userLeadsCount = buyerUser
     ? leads.filter(
@@ -106,7 +132,7 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Click outside to close dropdowns
+  // Click outside to close desktop dropdowns
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -127,6 +153,7 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowSuggestions(false);
+      setIsMobileSearchOpen(false);
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
@@ -134,41 +161,48 @@ export default function Header() {
   const handleSelectSuggestion = (term: string) => {
     setSearchQuery(term);
     setShowSuggestions(false);
+    setIsMobileSearchOpen(false);
     router.push(`/search?q=${encodeURIComponent(term)}`);
   };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-xs border-b border-slate-200">
-      
-      {/* Main Wide Navigation Header (Matching IndiaMART exact layout) */}
-      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      {/* Main Navigation Header */}
+      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3">
         <div className="flex items-center justify-between gap-3 lg:gap-5">
-          
-          {/* Professional BizMart Logo: Clean icon without card/bg & clean text */}
+          {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
             <img
               src="/logo-icon.png"
               alt="BizMart Logo"
-              className="h-10 w-10 sm:h-11 sm:w-11 object-contain transition-transform group-hover:scale-105"
+              className="h-9 w-9 sm:h-11 sm:w-11 object-contain transition-transform group-hover:scale-105"
             />
             <span className="text-2xl sm:text-[28px] font-black tracking-tight text-[#2b3377] leading-none">
               biz<span className="text-[#00a699]">mart</span>
             </span>
           </Link>
 
-          {/* IndiaMART Location Selector Box: [ 📍 City ▾ | 🔍 ] */}
-          <div ref={cityDropdownRef} className="relative hidden md:flex items-center rounded-lg border border-slate-300 bg-white shadow-2xs flex-shrink-0">
+          {/* IndiaMART Location Selector Box: Desktop Only */}
+          <div
+            ref={cityDropdownRef}
+            className="relative hidden md:flex items-center rounded-lg border border-slate-300 bg-white shadow-2xs flex-shrink-0"
+          >
             <button
               type="button"
               onClick={() => {
                 setIsCityDropdownOpen(!isCityDropdownOpen);
                 setCityFilter('');
               }}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-l-lg transition whitespace-nowrap"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-l-lg transition whitespace-nowrap cursor-pointer"
             >
               <MapPin size={15} className="text-[#d83734] shrink-0" />
               <span className="max-w-[110px] truncate">{selectedCity}</span>
-              <ChevronDown size={13} className={`text-slate-400 transition-transform ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                size={13}
+                className={`text-slate-400 transition-transform ${
+                  isCityDropdownOpen ? 'rotate-180' : ''
+                }`}
+              />
             </button>
             <div className="h-5 w-[1px] bg-slate-200" />
             <button
@@ -177,7 +211,7 @@ export default function Header() {
                 setIsCityDropdownOpen(!isCityDropdownOpen);
                 setCityFilter('');
               }}
-              className="p-2 text-slate-400 hover:text-slate-600 rounded-r-lg transition"
+              className="p-2 text-slate-400 hover:text-slate-600 rounded-r-lg transition cursor-pointer"
               title="Search and select delivery city"
             >
               <Search size={14} className="text-[#00a699]" />
@@ -235,7 +269,7 @@ export default function Header() {
                             router.push(`/products?city=${encodeURIComponent(city)}`);
                           }
                         }}
-                        className={`w-full text-left px-2.5 py-2 rounded-lg transition flex items-center justify-between whitespace-nowrap ${
+                        className={`w-full text-left px-2.5 py-2 rounded-lg transition flex items-center justify-between whitespace-nowrap cursor-pointer ${
                           isSelected
                             ? 'bg-[#00a699]/10 text-[#00a699] font-bold'
                             : 'text-slate-700 hover:bg-slate-50'
@@ -267,8 +301,8 @@ export default function Header() {
             )}
           </div>
 
-          {/* IndiaMART Search Bar: [ Enter product / service to search     📷 | 🔍 ] */}
-          <div ref={searchRef} className="flex-1 max-w-2xl relative min-w-0">
+          {/* Desktop Search Bar (Hidden on Mobile to prevent any squeezing) */}
+          <div ref={searchRef} className="hidden lg:block flex-1 max-w-2xl relative min-w-0">
             <form onSubmit={handleSearchSubmit} className="flex items-center w-full shadow-xs">
               <div className="relative flex-1 min-w-0 flex items-center bg-white rounded-l-lg border border-r-0 border-slate-300 focus-within:border-[#00a699]">
                 <input
@@ -294,13 +328,13 @@ export default function Header() {
 
               <button
                 type="submit"
-                className="bg-[#00a699] hover:bg-[#00857a] text-white px-5 sm:px-6 py-2.5 rounded-r-lg font-bold text-xs sm:text-sm transition flex items-center justify-center border border-[#00a699] flex-shrink-0"
+                className="bg-[#00a699] hover:bg-[#00857a] text-white px-5 sm:px-6 py-2.5 rounded-r-lg font-bold text-xs sm:text-sm transition flex items-center justify-center border border-[#00a699] flex-shrink-0 cursor-pointer"
               >
                 <Search size={18} />
               </button>
             </form>
 
-            {/* Autocomplete Suggestions Box */}
+            {/* Desktop Autocomplete Suggestions Box */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 overflow-hidden divide-y divide-slate-100">
                 <div className="px-4 py-2 bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex justify-between">
@@ -312,7 +346,7 @@ export default function Header() {
                     key={idx}
                     type="button"
                     onClick={() => handleSelectSuggestion(item)}
-                    className="w-full text-left px-4 py-2.5 text-xs sm:text-sm text-slate-700 hover:bg-[#00a699]/10 hover:text-[#00857a] flex items-center gap-2 transition"
+                    className="w-full text-left px-4 py-2.5 text-xs sm:text-sm text-slate-700 hover:bg-[#00a699]/10 hover:text-[#00857a] flex items-center gap-2 transition cursor-pointer"
                   >
                     <Search size={14} className="text-slate-400" />
                     <span>{item}</span>
@@ -322,19 +356,18 @@ export default function Header() {
             )}
           </div>
 
-          {/* IndiaMART Right Utilities (From screenshot: Get Best Price, Exporters, Help, Messages, Sign In) */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-            
-            {/* Get Best Price (Pill button with teal border matching screenshot) */}
+          {/* Desktop Right Utilities */}
+          <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+            {/* Get Best Price */}
             <button
               onClick={() => openRfqModal()}
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border-2 border-[#00a699] text-[#00a699] hover:bg-[#00a699] hover:text-white text-xs font-bold transition whitespace-nowrap shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border-2 border-[#00a699] text-[#00a699] hover:bg-[#00a699] hover:text-white text-xs font-bold transition whitespace-nowrap shadow-2xs cursor-pointer"
             >
               <span>Get Best Price</span>
             </button>
 
-            {/* Quick Links with Icons (Matching IndiaMART Top Right Bar) */}
-            <div className="hidden lg:flex items-center gap-4 text-slate-600 text-xs font-medium">
+            {/* Quick Links with Icons */}
+            <div className="flex items-center gap-4 text-slate-600 text-xs font-medium">
               <Link
                 href="/products"
                 className="flex flex-col items-center hover:text-[#00a699] transition whitespace-nowrap group"
@@ -348,7 +381,10 @@ export default function Header() {
                 className="flex flex-col items-center hover:text-[#00a699] transition whitespace-nowrap relative group"
               >
                 <div className="relative">
-                  <ShoppingCart size={18} className="text-slate-500 group-hover:text-[#00a699] transition" />
+                  <ShoppingCart
+                    size={18}
+                    className="text-slate-500 group-hover:text-[#00a699] transition"
+                  />
                   {mounted && rfqBasket.length > 0 && (
                     <span className="absolute -top-1 -right-2 bg-[#ff7e00] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                       {rfqBasket.length}
@@ -364,7 +400,10 @@ export default function Header() {
                 rel="noopener noreferrer"
                 className="flex flex-col items-center hover:text-green-600 transition whitespace-nowrap group"
               >
-                <MessageCircle size={18} className="text-slate-500 group-hover:text-green-600 transition" />
+                <MessageCircle
+                  size={18}
+                  className="text-slate-500 group-hover:text-green-600 transition"
+                />
                 <span className="text-[11px] mt-0.5">Messages</span>
               </a>
 
@@ -372,7 +411,10 @@ export default function Header() {
                 href="/admin"
                 className="flex flex-col items-center hover:text-[#00a699] transition whitespace-nowrap group"
               >
-                <Layers size={18} className="text-slate-500 group-hover:text-[#00a699] transition" />
+                <Layers
+                  size={18}
+                  className="text-slate-500 group-hover:text-[#00a699] transition"
+                />
                 <span className="text-[11px] mt-0.5">CRM Leads</span>
               </Link>
 
@@ -386,15 +428,16 @@ export default function Header() {
                       {buyerUser.name.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex flex-col text-left">
-                      <span className="text-xs font-bold text-slate-800 group-hover:text-[#00a699] leading-tight flex items-center gap-1">
+                      <span className="text-xs font-bold text-slate-800 group-hover:text-[#00a699] leading-tight">
                         {buyerUser.name.split(' ')[0]}
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
                       </span>
                       <span className="text-[10px] text-slate-400 font-medium">Buyer Portal</span>
                     </div>
                     <ChevronDown
                       size={13}
-                      className={`text-slate-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`}
+                      className={`text-slate-400 transition-transform ${
+                        isUserMenuOpen ? 'rotate-180' : ''
+                      }`}
                     />
                   </button>
 
@@ -408,7 +451,9 @@ export default function Header() {
                             <CheckCircle2 size={10} /> Verified
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 font-mono mt-0.5">{buyerUser.phone}</p>
+                        <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                          {buyerUser.phone}
+                        </p>
                         {buyerUser.companyName && (
                           <p className="text-[11px] text-slate-600 font-medium truncate mt-1">
                             🏢 {buyerUser.companyName}
@@ -478,18 +523,132 @@ export default function Header() {
                 </button>
               )}
             </div>
+          </div>
 
-            {/* Mobile Menu Button */}
+          {/* Mobile Right Utilities: Search Icon ONLY (toggles search field), RFQ Cart, and Hamburger */}
+          <div className="flex lg:hidden items-center gap-1 sm:gap-2 flex-shrink-0">
+            {/* Search Icon Button (Opens Search Field without squeezing) */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-lg"
+              type="button"
+              onClick={() => {
+                setIsMobileSearchOpen(!isMobileSearchOpen);
+                if (!isMobileSearchOpen) {
+                  setTimeout(() => mobileSearchInputRef.current?.focus(), 150);
+                }
+              }}
+              className={`p-2 rounded-lg transition cursor-pointer ${
+                isMobileSearchOpen
+                  ? 'bg-[#00a699]/10 text-[#00a699]'
+                  : 'text-slate-700 hover:text-[#00a699] hover:bg-slate-100'
+              }`}
+              title="Search BizMart"
+              aria-label="Toggle Search Bar"
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <Search size={21} />
+            </button>
+
+            {/* Mobile RFQ Cart Link with Live Counter Badge */}
+            <Link
+              href="/rfq"
+              className="p-2 text-slate-700 hover:text-[#00a699] hover:bg-slate-100 rounded-lg relative transition"
+              title="RFQ Cart"
+              aria-label="RFQ Cart"
+            >
+              <ShoppingCart size={21} />
+              {mounted && rfqBasket.length > 0 && (
+                <span className="absolute 1 top-1 right-1 bg-[#ff7e00] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                  {rfqBasket.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Industry Standard Mobile Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu size={24} />
             </button>
           </div>
         </div>
 
-        {/* Secondary Category Subnav Bar */}
+        {/* Expandable Mobile Search Field Bar: Opens cleanly without squeezing the navbar */}
+        {isMobileSearchOpen && (
+          <div className="lg:hidden mt-2.5 pt-2 border-t border-slate-100 animate-in slide-in-from-top-2 duration-200">
+            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+              <div className="relative flex-1 flex items-center bg-slate-50 rounded-lg border border-slate-300 focus-within:border-[#00a699] focus-within:bg-white shadow-2xs">
+                <Search size={15} className="absolute left-3 text-slate-400 shrink-0" />
+                <input
+                  ref={mobileSearchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="Enter product / service to search..."
+                  className="w-full pl-9 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none bg-transparent"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSuggestions([]);
+                    }}
+                    className="absolute right-2 text-slate-400 hover:text-slate-600 text-xs font-bold p-1"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="bg-[#00a699] hover:bg-[#00857a] text-white px-3.5 py-2 rounded-lg font-bold text-xs transition shrink-0 cursor-pointer shadow-2xs"
+              >
+                Search
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileSearchOpen(false);
+                  setShowSuggestions(false);
+                }}
+                className="text-slate-500 hover:text-slate-800 text-xs font-semibold px-1 py-2 cursor-pointer"
+              >
+                Cancel
+              </button>
+            </form>
+
+            {/* Mobile Autocomplete Suggestions Box */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="mt-2 bg-white border border-slate-200 rounded-xl shadow-xl divide-y divide-slate-100 overflow-hidden">
+                <div className="px-3 py-1.5 bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between">
+                  <span>Suggested Products</span>
+                  <span className="text-[#00a699]">Direct Catalogue</span>
+                </div>
+                {suggestions.map((item, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSelectSuggestion(item)}
+                    className="w-full text-left px-3.5 py-2.5 text-xs text-slate-700 hover:bg-[#00a699]/10 flex items-center gap-2 transition cursor-pointer"
+                  >
+                    <Search size={13} className="text-slate-400 shrink-0" />
+                    <span className="truncate">{item}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Secondary Category Subnav Bar: Desktop Only */}
         <div className="hidden lg:flex items-center justify-between border-t border-slate-100 mt-2.5 pt-2 text-xs font-semibold text-slate-600 gap-4">
           <div className="flex items-center gap-6 overflow-x-auto no-scrollbar py-1 flex-1">
             <Link
@@ -550,161 +709,262 @@ export default function Header() {
 
           <div className="text-xs text-slate-400 font-medium flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
             <HelpCircle size={14} className="text-[#00a699]" />
-            <span>Need Help? <strong className="text-slate-700">096-9696-9696</strong></span>
+            <span>
+              Need Help? <strong className="text-slate-700">096-9696-9696</strong>
+            </span>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Dropdown Menu */}
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 mt-3 pt-3 pb-4 space-y-3">
-            {/* Buyer Status in Mobile Menu */}
-            {mounted && buyerUser?.isLoggedIn ? (
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-3 rounded-xl border border-emerald-200 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#00a699] text-white flex items-center justify-center font-bold text-sm shadow-xs">
-                    {buyerUser.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <p className="font-bold text-xs text-slate-900">{buyerUser.name}</p>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                    </div>
-                    <p className="text-[10px] text-slate-500 font-mono">{buyerUser.phone}</p>
-                  </div>
+      {/* Mobile Menu Backdrop Overlay */}
+      <div
+        className={`fixed inset-0 bg-black/60 backdrop-blur-xs z-[990] transition-opacity duration-300 lg:hidden ${
+          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Industry Standard Mobile Side Drawer (Sliding from Left with full height) */}
+      <aside
+        className={`fixed top-0 left-0 bottom-0 h-screen w-[85%] max-w-[340px] bg-white z-[1000] shadow-2xl flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-out lg:hidden ${
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Industry Standard Navy Blue Header Banner */}
+        <div className="bg-[#2b3377] text-white p-5 flex-shrink-0 relative">
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
+
+          {mounted && buyerUser?.isLoggedIn ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-white text-[#2b3377] flex items-center justify-center font-black text-lg shadow-md ring-2 ring-emerald-300">
+                  {buyerUser.name.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Link
-                    href="/buyer"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="px-2.5 py-1 bg-white text-[#00a699] border border-emerald-300 rounded-lg text-xs font-bold shadow-2xs hover:bg-emerald-50"
-                  >
-                    My RFQs ({userLeadsCount})
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      logoutBuyer();
-                    }}
-                    className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg cursor-pointer"
-                    title="Sign Out"
-                  >
-                    <LogOut size={16} />
-                  </button>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="font-bold text-sm text-white truncate">{buyerUser.name}</h3>
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[9px] font-bold">
+                      ✓ Verified
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 font-mono">{buyerUser.phone}</p>
                 </div>
               </div>
-            ) : (
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <User size={20} className="text-slate-500" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Buyer Account</p>
-                    <p className="text-[10px] text-slate-500">Track quotes & direct RFQ responses</p>
-                  </div>
-                </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <Link
+                  href="/buyer"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-bold text-center transition border border-white/20"
+                >
+                  Buyer Portal ({userLeadsCount} RFQs)
+                </Link>
                 <button
                   type="button"
                   onClick={() => {
                     setIsMenuOpen(false);
-                    openSignInModal();
+                    logoutBuyer();
                   }}
-                  className="px-3.5 py-1.5 bg-[#00a699] text-white rounded-lg text-xs font-bold hover:bg-[#008f84] transition cursor-pointer"
+                  className="py-1.5 px-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-200 text-xs font-semibold border border-red-400/30 transition cursor-pointer"
                 >
-                  Sign In
+                  Sign Out
                 </button>
               </div>
-            )}
-
-            {/* Mobile City Selector */}
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <MapPin size={13} className="text-[#d83734]" />
-                <span>Delivery Hub: <strong className="text-slate-900">{selectedCity}</strong></span>
-              </div>
-              <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
-                {TOP_CITIES.slice(0, 8).map((city) => (
-                  <button
-                    key={city}
-                    type="button"
-                    onClick={() => {
-                      setSelectedCity(city);
-                      setIsMenuOpen(false);
-                      if (city === 'All India') router.push('/products');
-                      else router.push(`/products?city=${encodeURIComponent(city)}`);
-                    }}
-                    className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition ${
-                      selectedCity === city
-                        ? 'bg-[#00a699] text-white'
-                        : 'bg-white border border-slate-200 text-slate-700'
-                    }`}
-                  >
-                    {city}
-                  </button>
-                ))}
-              </div>
             </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center font-bold">
+                  <User size={22} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-white">Hello, Welcome!</h3>
+                  <p className="text-[11px] text-slate-300">Sign in for direct factory rates</p>
+                </div>
+              </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
-              <Link
-                href="/"
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2.5 rounded-lg bg-slate-50 text-slate-800"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  openSignInModal();
+                }}
+                className="w-full py-2 px-4 rounded-xl bg-[#00a699] hover:bg-[#008f84] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
               >
-                Home
-              </Link>
-              <Link
-                href="/products"
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2.5 rounded-lg bg-slate-50 text-slate-800"
-              >
-                All Products
-              </Link>
+                <span>Sign In / Register</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Scrollable Drawer Body */}
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
+          {/* Featured B2B Actions */}
+          <div className="space-y-2">
+            {/* Post Requirement CTA Button */}
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                openRfqModal();
+              }}
+              className="w-full p-3 rounded-xl bg-gradient-to-r from-[#00a699] to-[#008f84] text-white font-bold text-xs shadow-sm transition flex items-center justify-between cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <FileText size={17} className="text-white" />
+                <div className="text-left">
+                  <div className="leading-tight">Post Buy Requirement</div>
+                  <div className="text-[10px] text-teal-100 font-normal">Get instant supplier quotes</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-white/80 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+
+            {/* Multi-Product RFQ Basket */}
+            <Link
+              href="/rfq"
+              onClick={() => setIsMenuOpen(false)}
+              className="w-full p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-slate-800 font-bold text-xs transition flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-2.5">
+                <ShoppingCart size={17} className="text-[#ff7e00]" />
+                <div className="text-left">
+                  <div className="text-slate-900 leading-tight">Multi-Product RFQ Basket</div>
+                  <div className="text-[10px] text-slate-500 font-normal">Bulk quotation cart</div>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-[#ff7e00] text-white text-[11px] font-mono font-black">
+                {mounted ? rfqBasket.length : 0}
+              </span>
+            </Link>
+          </div>
+
+          {/* Quick Hub Location Selector */}
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-slate-600">
+                <MapPin size={12} className="text-[#d83734]" />
+                <span>Delivery Hub: <strong className="text-slate-900">{selectedCity}</strong></span>
+              </span>
+            </div>
+            <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+              {TOP_CITIES.slice(0, 7).map((city) => (
+                <button
+                  key={city}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCity(city);
+                    setIsMenuOpen(false);
+                    if (city === 'All India') router.push('/products');
+                    else router.push(`/products?city=${encodeURIComponent(city)}`);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition cursor-pointer ${
+                    selectedCity === city
+                      ? 'bg-[#00a699] text-white'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  {city}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sourcing Categories Directory (IndiaMART style department links) */}
+          <div>
+            <div className="px-1 mb-1.5 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <span>Sourcing Categories</span>
               <Link
                 href="/categories"
                 onClick={() => setIsMenuOpen(false)}
-                className="p-2.5 rounded-lg bg-slate-50 text-slate-800"
+                className="text-[#00a699] hover:underline normal-case font-semibold"
               >
-                Categories Hub
+                View All →
               </Link>
-              <Link
-                href="/rfq"
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2.5 rounded-lg bg-slate-50 text-[#ff7e00] font-bold"
-              >
-                Multi-Product RFQ
-              </Link>
-              <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  openRfqModal();
-                }}
-                className="p-2.5 rounded-lg bg-[#00a699] text-white font-bold text-center col-span-2"
-              >
-                Get Best Price / Post Requirement
-              </button>
             </div>
-
-            <div className="pt-2 border-t border-slate-100 flex flex-col gap-2.5 text-xs">
-              <a
-                href="tel:+919876543210"
-                className="flex items-center gap-2 text-slate-700 py-1 font-semibold"
-              >
-                <PhoneCall size={15} className="text-[#00a699]" />
-                <span>Call Us: +91 98765 43210</span>
-              </a>
-              <a
-                href="https://wa.me/919876543210"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[#25D366] py-1 font-bold"
-              >
-                <MessageCircle size={15} />
-                <span>WhatsApp Instant Inquiry</span>
-              </a>
+            <div className="space-y-0.5 text-xs font-semibold text-slate-700">
+              {CATEGORY_ITEMS.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/categories/${cat.slug}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition group"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <span className="text-base">{cat.icon}</span>
+                    <span className="group-hover:text-[#00a699] transition">{cat.name}</span>
+                  </span>
+                  <ChevronRight size={13} className="text-slate-300 group-hover:text-[#00a699] transition" />
+                </Link>
+              ))}
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Navigation Pages */}
+          <div className="border-t border-slate-100 pt-2 space-y-0.5 text-xs font-semibold text-slate-700">
+            <Link
+              href="/"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
+            >
+              <Globe size={15} className="text-[#00a699]" />
+              <span>Marketplace Home</span>
+            </Link>
+
+            <Link
+              href="/products"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
+            >
+              <Package size={15} className="text-slate-400" />
+              <span>Full Product Catalogue</span>
+            </Link>
+
+            <Link
+              href="/admin"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition"
+            >
+              <Layers size={15} className="text-slate-400" />
+              <span>CRM Leads Dashboard</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Industry Standard Drawer Footer: Quick Help & WhatsApp */}
+        <div className="p-3 border-t border-slate-100 bg-slate-50 flex-shrink-0 space-y-2 text-xs">
+          <div className="grid grid-cols-2 gap-2">
+            <a
+              href="tel:+919876543210"
+              className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 transition shadow-2xs"
+            >
+              <PhoneCall size={13} className="text-[#00a699]" />
+              <span>Call Help</span>
+            </a>
+
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] font-bold hover:bg-[#25D366]/20 transition shadow-2xs"
+            >
+              <MessageCircle size={13} />
+              <span>WhatsApp</span>
+            </a>
+          </div>
+
+          <div className="text-[10px] text-center text-slate-400 pt-0.5">
+            BizMart B2B Marketplace • Verified Direct Sourcing
+          </div>
+        </div>
+      </aside>
     </header>
   );
 }

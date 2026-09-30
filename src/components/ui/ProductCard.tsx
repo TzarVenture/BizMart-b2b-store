@@ -95,7 +95,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Product Info */}
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="p-3.5 sm:p-5 flex flex-col flex-grow">
         <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
           <span className="uppercase font-bold tracking-wider text-[#00a699] truncate max-w-[130px]">
             {brand}

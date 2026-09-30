@@ -91,14 +91,14 @@ export default async function HomePage() {
       <HeroBanner />
 
       {/* 2. Trending on BizMart Section (Starts on clean solid white merging seamlessly from hero bottom fade with proper gap) */}
-      <div className="w-full bg-white pb-12 pt-8 sm:pt-10">
+      <div className="w-full bg-white pb-8 sm:pb-12 pt-6 sm:pt-10">
         <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8">
           <TrendingSection products={trendingList} />
         </div>
       </div>
 
       {/* 3. Main Wide Content Showcases */}
-      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 sm:space-y-14">
+      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 space-y-6 sm:space-y-14">
         
         {/* Industry Showcase 1: Consumer Electronics & Smartphones */}
         {electronicsProducts.length > 0 && (

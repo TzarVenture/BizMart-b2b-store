@@ -6,23 +6,10 @@ import { FileText, ArrowRight, UserCheck, BarChart2, CheckCircle2 } from 'lucide
 import Link from 'next/link';
 
 export default function HeroBanner() {
-  const { openRfqModal, openSignInModal, openEnquiriesModal, buyerUser, leads } = useLeadStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const userLeadsCount = buyerUser
-    ? leads.filter(
-        (l) =>
-          l.phone.replace(/\D/g, '').includes(buyerUser.phone.replace(/\D/g, '')) ||
-          l.customerName.toLowerCase() === buyerUser.name.toLowerCase()
-      ).length
-    : 0;
+  const { openRfqModal } = useLeadStore();
 
   return (
-    <section className="relative bg-[#2b3377] text-white overflow-hidden pt-16 lg:pt-24 pb-24 lg:pb-32 min-h-[520px] lg:min-h-[600px] xl:min-h-[660px] flex flex-col justify-between">
+    <section className="relative bg-[#2b3377] text-white overflow-hidden pt-12 sm:pt-16 lg:pt-24 pb-20 sm:pb-24 lg:pb-32 min-h-[460px] sm:min-h-[520px] lg:min-h-[600px] xl:min-h-[660px] flex flex-col justify-between">
       
       {/* IndiaMART Concentric Circle Lines Background Pattern */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-end">
@@ -46,94 +33,62 @@ export default function HeroBanner() {
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14">
           
           {/* Left Title & Tagline */}
-          <div className="space-y-4 text-center lg:text-left max-w-3xl">
-            {mounted && buyerUser?.isLoggedIn && (
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 text-xs font-semibold text-emerald-300">
-                <CheckCircle2 size={13} className="text-emerald-400" />
-                <span>Welcome back, <strong className="text-white">{buyerUser.name}</strong> ({buyerUser.companyName || 'Verified Buyer'})</span>
-              </div>
-            )}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+          <div className="space-y-3 sm:space-y-4 text-center lg:text-left max-w-3xl">
+            <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
               India's Largest Online <span className="font-extrabold text-white">B2B Marketplace</span>
             </h1>
-            <p className="text-sm sm:text-lg text-slate-200 font-medium max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-lg text-slate-200 font-medium max-w-2xl leading-relaxed">
               Connecting 21 Cr+ Buyers with Direct Factory Quality & Wholesale Rates
             </p>
           </div>
 
-          {/* Right Action Buttons (Matching IndiaMART 3 White Pill Buttons in Screenshot) */}
-          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 sm:gap-4 flex-shrink-0">
+          {/* Right Action Buttons: Completely Identical, Uniform Pill Buttons on Both Mobile & Desktop */}
+          <div className="w-full max-w-md sm:max-w-none sm:w-auto grid grid-cols-2 gap-2.5 sm:flex sm:flex-row sm:gap-4 flex-shrink-0">
             {/* Post Requirement Button */}
             <button
               onClick={() => openRfqModal()}
-              className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#2b3377] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2 group hover:scale-105 cursor-pointer"
+              className="w-full sm:w-auto px-4 sm:px-8 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#2b3377] font-bold text-xs sm:text-sm shadow-lg transition flex items-center justify-center gap-1.5 sm:gap-2 group hover:scale-105 cursor-pointer text-center"
             >
-              <FileText size={17} className="text-[#2b3377]" />
-              <span>Post Requirement</span>
-              <ArrowRight size={15} className="text-[#2b3377] group-hover:translate-x-1 transition-transform" />
+              <FileText size={16} className="text-[#00a699] shrink-0" />
+              <span className="truncate">Post Requirement</span>
+              <ArrowRight size={14} className="text-[#00a699] shrink-0 transition-transform group-hover:translate-x-1" />
             </button>
 
             {/* Instant RFQ Button */}
             <Link
               href="/rfq"
-              className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#00a699] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2 group hover:scale-105"
+              className="w-full sm:w-auto px-4 sm:px-8 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#2b3377] font-bold text-xs sm:text-sm shadow-lg transition flex items-center justify-center gap-1.5 sm:gap-2 group hover:scale-105 text-center"
             >
-              <BarChart2 size={17} className="text-[#00a699]" />
-              <span>Instant RFQ</span>
-              <ArrowRight size={15} className="text-[#00a699] group-hover:translate-x-1 transition-transform" />
+              <BarChart2 size={16} className="text-[#00a699] shrink-0" />
+              <span className="truncate">Instant RFQ</span>
+              <ArrowRight size={14} className="text-[#00a699] shrink-0 transition-transform group-hover:translate-x-1" />
             </Link>
-
-            {/* Buyer Sign In / My Enquiries Button */}
-            {mounted && buyerUser?.isLoggedIn ? (
-              <Link
-                href="/buyer"
-                className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#00a699] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2.5 group hover:scale-105 border-2 border-emerald-400"
-              >
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <span className="text-[#2b3377]">
-                  My Enquiries <span className="ml-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs">{userLeadsCount}</span>
-                </span>
-                <ArrowRight size={15} className="text-[#00a699] group-hover:translate-x-1 transition-transform" />
-              </Link>
-            ) : (
-              <button
-                onClick={() => openSignInModal()}
-                className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#ff7e00] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2 group hover:scale-105 cursor-pointer"
-              >
-                <UserCheck size={17} className="text-[#ff7e00]" />
-                <span>Sign In</span>
-                <ArrowRight size={15} className="text-[#ff7e00] group-hover:translate-x-1 transition-transform" />
-              </button>
-            )}
           </div>
 
         </div>
       </div>
 
       {/* Bottom Stats Row inside Hero */}
-      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-6 mt-8 sm:mt-10 border-t border-white/10 mb-8 sm:mb-12">
-        <div className="flex flex-wrap items-center justify-between gap-6 text-xs sm:text-sm">
+      <div className="w-full max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-6 mt-6 sm:mt-10 border-t border-white/10 mb-8 sm:mb-12">
+        <div className="grid grid-cols-2 md:flex items-center justify-between gap-4 sm:gap-6 text-xs sm:text-sm">
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white">21Cr+</span>
-            <span className="text-slate-200 font-bold uppercase text-xs tracking-wider">Buyers</span>
+            <span className="text-xl sm:text-3xl font-black text-white">21Cr+</span>
+            <span className="text-slate-200 font-bold uppercase text-[10px] sm:text-xs tracking-wider">Buyers</span>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white">10,000+</span>
-            <span className="text-slate-200 font-bold uppercase text-xs tracking-wider">Catalogue Items</span>
+            <span className="text-xl sm:text-3xl font-black text-white">10,000+</span>
+            <span className="text-slate-200 font-bold uppercase text-[10px] sm:text-xs tracking-wider">Catalogue Items</span>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white">50+</span>
-            <span className="text-slate-200 font-bold uppercase text-xs tracking-wider">Categories</span>
+            <span className="text-xl sm:text-3xl font-black text-white">50+</span>
+            <span className="text-slate-200 font-bold uppercase text-[10px] sm:text-xs tracking-wider">Categories</span>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white">30 Years</span>
-            <span className="text-slate-200 font-bold uppercase text-xs tracking-wider">Empowering Businesses</span>
+            <span className="text-xl sm:text-3xl font-black text-white">30 Years</span>
+            <span className="text-slate-200 font-bold uppercase text-[10px] sm:text-xs tracking-wider">Empowering Businesses</span>
           </div>
         </div>
       </div>

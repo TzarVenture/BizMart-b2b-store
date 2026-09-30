@@ -19,28 +19,30 @@ export default function IndustryShowcase({
   const { openRfqModal } = useLeadStore();
 
   return (
-    <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs my-8 sm:my-12" data-aos="fade-up">
+    <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 shadow-xs my-6 sm:my-12" data-aos="fade-up">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-slate-100">
-        <div>
-          <span className="text-xs font-bold text-[#00a699] uppercase tracking-wider block mb-1">
+      <div className="flex items-center justify-between gap-3 mb-4 sm:mb-8 pb-3 sm:pb-4 border-b border-slate-100">
+        <div className="min-w-0">
+          <span className="text-[10px] sm:text-xs font-bold text-[#00a699] uppercase tracking-wider block mb-0.5 sm:mb-1">
             Enterprise Category Sourcing
           </span>
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h3 className="text-base sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight truncate">
             {title}
           </h3>
         </div>
-        <Link
-          href={`/categories/${categorySlug}`}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-50 hover:bg-[#00a699]/10 text-xs sm:text-sm font-bold text-[#00a699] border border-slate-200/80 hover:border-[#00a699]/30 transition group self-start sm:self-auto"
-        >
-          <span>Explore Category</span>
-          <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Link
+            href={`/categories/${categorySlug}`}
+            className="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-50 hover:bg-[#00a699]/10 text-xs sm:text-sm font-bold text-[#00a699] border border-slate-200/80 hover:border-[#00a699]/30 transition group"
+          >
+            <span>Explore All</span>
+            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
       </div>
 
-      {/* Grid of 6 Spacious Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
+      {/* Mobile: Horizontal Swipeable Row, Desktop: 6-Column Grid */}
+      <div className="flex md:grid overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory md:snap-none gap-3 sm:gap-4 md:gap-5 pb-2 md:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 md:grid-cols-3 lg:grid-cols-6">
         {products.slice(0, 6).map((product, idx) => {
           const image = product.thumbnail || product.images?.[0] || '';
           const inrPrice = formatINR(product.price);
@@ -51,7 +53,7 @@ export default function IndustryShowcase({
               key={product.id}
               data-aos="fade-up"
               data-aos-delay={(idx % 6) * 60}
-              className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col justify-between hover:shadow-xl hover:border-[#00a699] transition-all duration-300 hover:-translate-y-1.5 group relative"
+              className="w-[190px] sm:w-[220px] md:w-auto flex-shrink-0 md:flex-shrink snap-start md:snap-align-none bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 flex flex-col justify-between hover:shadow-xl hover:border-[#00a699] transition-all duration-300 hover:-translate-y-1.5 group relative"
             >
               {/* Product Image Box */}
               <Link
