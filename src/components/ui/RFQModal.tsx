@@ -6,7 +6,7 @@ import { useLeadStore } from '@/lib/leadStore';
 import { formatINR } from '@/lib/api';
 
 export default function RFQModal() {
-  const { isRfqModalOpen, selectedProductForRfq, closeRfqModal, addLead } = useLeadStore();
+  const { isRfqModalOpen, selectedProductForRfq, closeRfqModal, addLead, buyerUser } = useLeadStore();
 
   const [productTitle, setProductTitle] = useState('');
   const [quantity, setQuantity] = useState<number>(50);
@@ -29,8 +29,18 @@ export default function RFQModal() {
       setProductTitle('');
       setQuantity(50);
     }
+
+    if (buyerUser && buyerUser.isLoggedIn) {
+      setCustomerName(buyerUser.name || '');
+      setPhone(buyerUser.phone.replace('+91 ', '').replace('+91', '').trim());
+      setEmail(buyerUser.email || '');
+      setCompanyName(buyerUser.companyName || '');
+      setLocation(buyerUser.city || 'Delhi');
+      setGstNumber(buyerUser.gstNumber || '');
+    }
+
     setIsSubmitted(false);
-  }, [selectedProductForRfq, isRfqModalOpen]);
+  }, [selectedProductForRfq, isRfqModalOpen, buyerUser]);
 
   if (!isRfqModalOpen) return null;
 
@@ -131,6 +141,19 @@ export default function RFQModal() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+            {buyerUser && buyerUser.isLoggedIn && (
+              <div className="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
+                <div className="flex items-center gap-2">
+                  <CheckCircle size={15} className="text-emerald-600 flex-shrink-0" />
+                  <span>
+                    Auto-filled for <strong>{buyerUser.name}</strong> ({buyerUser.phone})
+                  </span>
+                </div>
+                <span className="font-semibold text-[11px] bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full">
+                  Verified Buyer
+                </span>
+              </div>
+            )}
             {selectedProductForRfq && (
               <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
                 <img

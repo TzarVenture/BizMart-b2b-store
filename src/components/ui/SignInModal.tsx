@@ -5,7 +5,7 @@ import { X, User, Phone, CheckCircle2, ShieldCheck, ArrowRight, Lock } from 'luc
 import { useLeadStore } from '@/lib/leadStore';
 
 export default function SignInModal() {
-  const { isSignInModalOpen, closeSignInModal } = useLeadStore();
+  const { isSignInModalOpen, closeSignInModal, loginBuyer } = useLeadStore();
   const [identifier, setIdentifier] = useState('');
   const [step, setStep] = useState<'input' | 'otp' | 'success'>('input');
   const [otp, setOtp] = useState('');
@@ -20,13 +20,18 @@ export default function SignInModal() {
 
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
+    loginBuyer({
+      phone: identifier.startsWith('+91') ? identifier : `+91 ${identifier}`,
+      name: identifier.includes('@') ? identifier.split('@')[0] : 'Rajesh Sharma',
+      companyName: 'Sharma Industrial Supplies',
+    });
     setStep('success');
     setTimeout(() => {
       closeSignInModal();
       setStep('input');
       setIdentifier('');
       setOtp('');
-    }, 1500);
+    }, 1200);
   };
 
   return (

@@ -52,6 +52,16 @@ export interface RFQItem {
   unit: string;
 }
 
+export interface BuyerUser {
+  name: string;
+  phone: string;
+  email?: string;
+  companyName?: string;
+  city?: string;
+  gstNumber?: string;
+  isLoggedIn: boolean;
+}
+
 interface LeadStoreState {
   leads: Lead[];
   rfqBasket: RFQItem[];
@@ -81,6 +91,13 @@ interface LeadStoreState {
   isSignInModalOpen: boolean;
   openSignInModal: () => void;
   closeSignInModal: () => void;
+  // Buyer Authentication & Enquiries Portal
+  buyerUser: BuyerUser | null;
+  loginBuyer: (user: Partial<BuyerUser>) => void;
+  logoutBuyer: () => void;
+  isEnquiriesModalOpen: boolean;
+  openEnquiriesModal: () => void;
+  closeEnquiriesModal: () => void;
 }
 
 const INITIAL_LEADS: Lead[] = [
@@ -154,6 +171,8 @@ export const useLeadStore = create<LeadStoreState>()(
       isRfqModalOpen: false,
       selectedProductForRfq: null,
       isSignInModalOpen: false,
+      buyerUser: null,
+      isEnquiriesModalOpen: false,
 
       addLead: (leadData) => {
         const newLead: Lead = {
@@ -267,6 +286,35 @@ export const useLeadStore = create<LeadStoreState>()(
 
       closeSignInModal: () => {
         set({ isSignInModalOpen: false });
+      },
+
+      loginBuyer: (userData) => {
+        const phone = userData.phone || '+91 98765 43210';
+        const name = userData.name || (phone.includes('@') ? phone.split('@')[0] : 'Rajesh Sharma');
+        set({
+          buyerUser: {
+            name,
+            phone,
+            email: userData.email || (phone.includes('@') ? phone : `${name.toLowerCase().replace(/\s+/g, '')}@buyer.in`),
+            companyName: userData.companyName || 'Sharma Industrial Supplies',
+            city: userData.city || 'Bengaluru',
+            gstNumber: userData.gstNumber || '29ABCDE1234F1Z5',
+            isLoggedIn: true,
+          },
+          isSignInModalOpen: false,
+        });
+      },
+
+      logoutBuyer: () => {
+        set({ buyerUser: null });
+      },
+
+      openEnquiriesModal: () => {
+        set({ isEnquiriesModalOpen: true });
+      },
+
+      closeEnquiriesModal: () => {
+        set({ isEnquiriesModalOpen: false });
       },
     }),
     {

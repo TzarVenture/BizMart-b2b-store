@@ -1,11 +1,25 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useLeadStore } from '@/lib/leadStore';
-import { FileText, ArrowRight, UserCheck, BarChart2 } from 'lucide-react';
+import { FileText, ArrowRight, UserCheck, BarChart2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HeroBanner() {
-  const { openRfqModal, openSignInModal } = useLeadStore();
+  const { openRfqModal, openSignInModal, openEnquiriesModal, buyerUser, leads } = useLeadStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const userLeadsCount = buyerUser
+    ? leads.filter(
+        (l) =>
+          l.phone.replace(/\D/g, '').includes(buyerUser.phone.replace(/\D/g, '')) ||
+          l.customerName.toLowerCase() === buyerUser.name.toLowerCase()
+      ).length
+    : 0;
 
   return (
     <section className="relative bg-[#2b3377] text-white overflow-hidden pt-16 lg:pt-24 pb-24 lg:pb-32 min-h-[520px] lg:min-h-[600px] xl:min-h-[660px] flex flex-col justify-between">
@@ -33,6 +47,12 @@ export default function HeroBanner() {
           
           {/* Left Title & Tagline */}
           <div className="space-y-4 text-center lg:text-left max-w-3xl">
+            {mounted && buyerUser?.isLoggedIn && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 text-xs font-semibold text-emerald-300">
+                <CheckCircle2 size={13} className="text-emerald-400" />
+                <span>Welcome back, <strong className="text-white">{buyerUser.name}</strong> ({buyerUser.companyName || 'Verified Buyer'})</span>
+              </div>
+            )}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
               India's Largest Online <span className="font-extrabold text-white">B2B Marketplace</span>
             </h1>
@@ -63,15 +83,31 @@ export default function HeroBanner() {
               <ArrowRight size={15} className="text-[#00a699] group-hover:translate-x-1 transition-transform" />
             </Link>
 
-            {/* Buyer Sign In Button */}
-            <button
-              onClick={() => openSignInModal()}
-              className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#ff7e00] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2 group hover:scale-105 cursor-pointer"
-            >
-              <UserCheck size={17} className="text-[#ff7e00]" />
-              <span>Sign In</span>
-              <ArrowRight size={15} className="text-[#ff7e00] group-hover:translate-x-1 transition-transform" />
-            </button>
+            {/* Buyer Sign In / My Enquiries Button */}
+            {mounted && buyerUser?.isLoggedIn ? (
+              <button
+                onClick={() => openEnquiriesModal()}
+                className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#00a699] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2.5 group hover:scale-105 cursor-pointer border-2 border-emerald-400"
+              >
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-[#2b3377]">
+                  My Enquiries <span className="ml-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs">{userLeadsCount}</span>
+                </span>
+                <ArrowRight size={15} className="text-[#00a699] group-hover:translate-x-1 transition-transform" />
+              </button>
+            ) : (
+              <button
+                onClick={() => openSignInModal()}
+                className="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#ff7e00] font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2 group hover:scale-105 cursor-pointer"
+              >
+                <UserCheck size={17} className="text-[#ff7e00]" />
+                <span>Sign In</span>
+                <ArrowRight size={15} className="text-[#ff7e00] group-hover:translate-x-1 transition-transform" />
+              </button>
+            )}
           </div>
 
         </div>
